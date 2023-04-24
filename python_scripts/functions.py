@@ -30,6 +30,7 @@ random.seed(0)
 def read_data(file="minable"):
     if file == "minable":
         minable = pd.read_csv(getPath(FILES.minable), index_col=0)
+        minable['time']= pd.to_datetime(minable['time'])
         return minable
     elif file == "earth":
         df = pd.read_excel(getPath(FILES.input_earthquake))
@@ -99,13 +100,24 @@ def period_calculation(df, period_length=10):
     print(df.PERIOD.value_counts())
     return df
 
-def histogram_monthly(df):
-    df['NewDate'] = df['time'] + pd.offsets.DateOffset(days=-5)
-    # extract the new month label from the shifted date
-    df['NewMonth'] = df['NewDate'].dt.month
-    # plot a histogram with Plotly
-    fig = px.histogram(df.sort_values(by="NewMonth"), x="MAG_SEG", color='NewMonth', barmode='group', height=400)
-    #fig.update_layout(xaxis_title='MAG_SEG', yaxis_title='Count')
+def histogram_monthly(df, date_off_set=False, bool_mag_seg=True):
+    if date_off_set:
+        print("Here we dateoffset -5 days")
+        df['NewDate'] = df['time'] + pd.offsets.DateOffset(days=-5)
+        # extract the new month label from the shifted date
+        df['NewMonth'] = df['NewDate'].dt.month
+        # plot a histogram with Plotly
+        if bool_mag_seg:
+            fig = px.histogram(df.sort_values(by="NewMonth"), x="MAG_SEG", color='NewMonth', barmode='group', height=400)
+        else:
+            fig = px.histogram(df.sort_values(by="NewMonth"), x="NewMonth", color='NewMonth', barmode='group', height=400)          
+    else:
+        if bool_mag_seg:
+            fig = px.histogram(df.sort_values(by="month"), x="MAG_SEG", color='month', barmode='group', height=400)
+        else:
+            fig = px.histogram(df.sort_values(by="month"), x="month", color='month', barmode='group', height=400)
+
+
     fig.show()
 
 def histogram_countries(df, countries):
@@ -125,7 +137,7 @@ def countries_value_counts(df):
     # To see number of earthquakes for each country.
     df.Pais = df.Pais.fillna("No_Country")
     for i,v in df.Pais.value_counts().items():
-        print(f"{i} : {v}") 
+        print(f"{i:18s}: {v}") 
     # Calculate the number of NAN in country column
     print(f'Number of NAN : {df.Pais.isna().sum()}')
 
@@ -180,26 +192,37 @@ def trendline_calculations(df, cluster = False):
             df_filt = df[df.cluster_label == c]
             series_totrend = df_filt.PERIOD.value_counts()
             series_totrend = series_totrend.sort_index()
-            trend_results_cluster[c] = round(trendline(series_totrend),2)
-        trend_results_cluster =dict(sorted(trend_results_cluster.items(), key=lambda item: item[1], reverse=True))
+            sum_series = np.sum(series_totrend)
+            trend = trendline(series_totrend)
+            trend_results_cluster[c] = (round(trend,2), sum_series)
+        trend_results_cluster =dict(sorted(trend_results_cluster.items(), key=lambda item: item[1][0], reverse=True))
         for key, value in trend_results_cluster.items():
-            print(f"For Cluster {key} the trendline is {value}")
-            if value < 0:
+            print(f"For Cluster {key} the trendline is                 : {value[0]}")
+            print(f"Cluster {key}: Proportion of trend and #eartquakes : {round(value[0]/value[1], 2)}")
+
+            if value[0] < 0:
                 neg_cluster[key] = value
         return trend_results_cluster, neg_cluster
     else:
         series_totrend = df.PERIOD.value_counts()
         series_totrend = series_totrend.sort_index()
-        print(f"Trendline for the whole series is : {round(trendline(series_totrend),2)}")
+        sum_series = np.sum(series_totrend)
+        trend = trendline(series_totrend)
+        print(f"Trendline for the whole series is               : {round(trend,2)}")
+        print(f"The proportion of trendline and #eartquakes are : {round(trend/sum_series, 2)}")
         trend_results = {}
         for mag_seg in df.MAG_SEG.unique().tolist():
             df_filt = df[df.MAG_SEG == mag_seg]
             series_totrend = df_filt.PERIOD.value_counts()
             series_totrend = series_totrend.sort_index()
-            trend_results[f"Mag Segment {mag_seg}"] = round(trendline(series_totrend),2)
+            sum_series = np.sum(series_totrend)
+            trend = trendline(series_totrend)
+            trend_results[f"Mag Segment {mag_seg}"] = round(trend, 2)
+            print(f"Trendline for Mag Segment {mag_seg} is          : {round(trend,2)}")
+            print(f"The proportion of trendline and #eartquakes are : {round(trend/sum_series, 2)}")
             
-        for key, value in trend_results.items():
-            print(f"For {key} the trendline is {value}")
+        #for key, value in trend_results.items():
+        #    print(f"For {key} the trendline is {value}")
         return trend_results
 
 def calculate_clustering(df, normalized=False):
@@ -253,7 +276,8 @@ def specific_cluster_info(df, cluster):
     series_totrend = df_filt.PERIOD.value_counts()
     series_totrend = series_totrend.sort_index()
     print(series_totrend)
-    print(f"Cluster {cluster} has a trend of {trendline(series_totrend)}")
+    trend = round(trendline(series_totrend),2)
+    print(f"Cluster {cluster:<d} has a trend of {trend}, proportion is {round(trend/len(df_filt),2)}")
 
 def interpolate_position(original_position, final_position, datetime):
     """
