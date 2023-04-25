@@ -15,6 +15,10 @@ from statsmodels.graphics.tsaplots import plot_acf
 from scipy.fftpack import fft
 from scipy.signal import blackman
 from scipy.signal import periodogram
+from geopy.geocoders import Nominatim
+import plotly.graph_objects as go
+
+
 
 from sklearn.cluster import KMeans
 import seaborn as sns; sns.set()
@@ -24,7 +28,8 @@ module_path = os.path.abspath(os.path.join('..'))
 if module_path not in sys.path:
     sys.path.append(module_path+"\\df")
 from manage_file import FILES, getPath
-
+import warnings
+warnings.filterwarnings('ignore')
 
 random.seed(0)
 def read_data(file="minable"):
@@ -149,30 +154,36 @@ def plot_map(df, clusters= False,specific_clusters=None):
                                 lon="longitude", 
                                 hover_name="index", 
                                 hover_data=["index"],
-                                zoom=1, 
+                                zoom=0.5, 
                                 height=800,
                                 width=800)
     elif specific_clusters:
         df_filt = df[df.cluster_label.isin(specific_clusters)]
+        a = df_filt["cluster_label"].value_counts()
+        df_filt["cluster_count"] = df_filt["cluster_label"].apply(lambda x: a[x])
         fig = px.scatter_mapbox(df_filt, 
                                 lat="latitude", 
                                 lon="longitude", 
                                 hover_name="index", 
-                                hover_data=["index"],
+                                hover_data=["index", "cluster_count"],
                                 color="cluster_label",
-                                zoom=1, 
+                                zoom=0.5, 
                                 height=800,
                                 width=800)
+        fig.update_layout(coloraxis_showscale=False)
     else:
+        a = df["cluster_label"].value_counts()
+        df["cluster_count"] = df["cluster_label"].apply(lambda x: a[x])
         fig = px.scatter_mapbox(df, 
                         lat="latitude", 
                         lon="longitude", 
                         hover_name="index", 
-                        hover_data=["index"],
+                        hover_data=["index", "cluster_count"],
                         color="cluster_label",
-                        zoom=1, 
+                        zoom=0.5, 
                         height=800,
                         width=800)
+        fig.update_layout(coloraxis_showscale=False)
 
     fig.update_layout(mapbox_style="open-street-map")
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
@@ -322,3 +333,106 @@ def apply_interpolation(df_merged, df_moon, vars_names=["r/km"]):
                 df_merged.loc[index,f"{var_name}_interpolated"] = interpolate_position(original_pos, final_pos, time)
             
     return df_merged
+
+
+def get_country(lat, lon):
+    geolocator = Nominatim(user_agent="earthquake_moon_project")
+    location = geolocator.reverse(f"{lat}, {lon}", exactly_one=True)
+    if location is None:
+        return "No_Country"
+    else:
+        return location.raw["address"].get("country", "No_Country")
+
+
+def describe_columns(df, columns, step_quantile=0.25, clusters=[]):
+    """
+    Computes descriptive statistics of each column in a pandas DataFrame.
+    
+    Parameters:
+        df (pandas.DataFrame): A pandas DataFrame object.
+        columns (list): list of columns.
+        step_quantile (float): The step between each quantile to compute. Default is 0.25.
+        clusters (list): list of clusters of interest.
+    
+    Returns:
+        (pandas.DataFrame): A DataFrame object containing the computed statistics for each column.
+    """
+    if clusters:
+        df = df[df.cluster_label.isin(clusters)]
+    
+    df = df[columns]
+    
+    quantiles = np.arange(step_quantile, 1+step_quantile, step_quantile)
+    stats = {
+        'count': df.count(),
+        'mean': df.mean(),
+        'std': df.std(),
+        'min': df.min(),
+    }
+    
+    for q in quantiles:
+        stats[f'{q*100:.0f}%'] = df.quantile(q)
+        
+    stats['max'] = df.max()
+    stats_df = pd.DataFrame(stats)
+    
+    # Round values to 2 decimal places
+    stats_df = stats_df.round(2)
+    
+    return stats_df.transpose()
+def calculo_distribucion(df, var = "ill_frac_interpolated", num_bins=10, specific_cluster=None):
+    if specific_cluster:
+        df = df[df.cluster_label == specific_cluster]
+    
+    max_ = df[var].max()
+    min_ = df[var].min()
+    bin_width = (max_ - min_) / num_bins
+
+    # Define the edges of the bins
+    bin_edges = [min_] + [min_ + i * bin_width for i in range(1, num_bins)] + [max_]
+    bin_edges
+    print(var)
+    for i in range(len(bin_edges)-1):
+        df_filt = df[(df[var]>=bin_edges[i])&(df[var]<=bin_edges[i+1])]
+        print(f"Rango ({bin_edges[i]:.3f},{bin_edges[i+1]:.3f}): cantidad total {len(df_filt)}, proporción sobre el total {round(100*len(df_filt)/len(df),3)}%")
+    
+def plot_monthly(df, years=(1990,2010)):
+    df = df[(df.year>=years[0]) & (df.year<=years[1])]
+    counts = df.groupby(['year', 'month']).size().reset_index(name='count')
+
+    colors = [
+        "#00539CFF",      # red
+        "#EEA47FFF",    # orange
+        "#F96167",    # yellow
+        "#FCE77D",      # green
+        "#CCF381",      # blue
+        "#4831D4",    # purple
+        "#E2D1F9",    # magenta
+        "#317773",  # pink
+        "#990011FF",     # gray
+        "#FF69B4",     # black
+        "#00FFFF",   # steel blue
+        "#FCEDDA",     # saddle brown
+    ]
+    
+
+    # Create a Plotly bar chart with the year and month on the x-axis and the count on the y-axis
+    fig = go.Figure()
+    fig.add_trace(go.Bar(x=counts['year'].astype(str) + '-' + counts['month'].astype(str).str.zfill(2),
+                        y=counts['count'],
+                        marker=dict(color=counts['month'], colorscale="sunset"),
+                        ))
+    fig.update_layout(title='Number of Occurrences by Month and Year',
+                    xaxis_title='Year-Month',
+                    yaxis_title='Count')
+    fig.show()
+
+def distribution_plot(df, var="ill_frac_interpolated", specific_cluster=None):
+    if specific_cluster:
+        df = df[df["cluster_label"]==specific_cluster]
+
+    ax = df[var].plot(kind='kde', figsize=(25,15), title=f"Kernel Density Estimate of {var}")
+    ax.axvline(df[var].min(), color='red', linestyle='--')
+    ax.axvline(df[var].max(), color='red', linestyle='--')
+
+    plt.show()
