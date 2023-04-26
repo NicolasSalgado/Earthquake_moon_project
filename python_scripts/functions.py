@@ -15,7 +15,6 @@ from statsmodels.graphics.tsaplots import plot_acf
 from scipy.fftpack import fft
 from scipy.signal import blackman
 from scipy.signal import periodogram
-from geopy.geocoders import Nominatim
 import plotly.graph_objects as go
 
 
@@ -333,15 +332,6 @@ def apply_interpolation(df_merged, df_moon, vars_names=["r/km"]):
                 df_merged.loc[index,f"{var_name}_interpolated"] = interpolate_position(original_pos, final_pos, time)
             
     return df_merged
-
-
-def get_country(lat, lon):
-    geolocator = Nominatim(user_agent="earthquake_moon_project")
-    location = geolocator.reverse(f"{lat}, {lon}", exactly_one=True)
-    if location is None:
-        return "No_Country"
-    else:
-        return location.raw["address"].get("country", "No_Country")
 
 
 def describe_columns(df, columns, step_quantile=0.25, clusters=[]):
