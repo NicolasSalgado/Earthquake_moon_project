@@ -8,6 +8,7 @@ import os
 
 import matplotlib.pyplot as plt
 import plotly.express as px
+import plotly.figure_factory as ff
 
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.graphics.tsaplots import plot_acf
@@ -371,7 +372,8 @@ def describe_columns(df, columns, step_quantile=0.25, clusters=[]):
     
     return stats_df.transpose()
 def calculo_distribucion(df, var = "ill_frac_interpolated", num_bins=10, specific_cluster=None):
-    if specific_cluster:
+    if specific_cluster != None:
+        print("Here")
         df = df[df.cluster_label == specific_cluster]
     
     max_ = df[var].max()
@@ -418,7 +420,7 @@ def plot_monthly(df, years=(1990,2010)):
     fig.show()
 
 def distribution_plot(df, var="ill_frac_interpolated", specific_cluster=None):
-    if specific_cluster:
+    if specific_cluster != None:
         df = df[df["cluster_label"]==specific_cluster]
 
     ax = df[var].plot(kind='kde', figsize=(25,15), title=f"Kernel Density Estimate of {var}")
@@ -426,3 +428,5 @@ def distribution_plot(df, var="ill_frac_interpolated", specific_cluster=None):
     ax.axvline(df[var].max(), color='red', linestyle='--')
 
     plt.show()
+    #fig = ff.create_distplot([df[var]],["var"])
+    #fig.show()
