@@ -430,3 +430,17 @@ def distribution_plot(df, var="ill_frac_interpolated", specific_cluster=None):
     plt.show()
     #fig = ff.create_distplot([df[var]],["var"])
     #fig.show()
+def histogram_overtime(df,var,specific_cluster=None, animation_frame="year"):
+    if specific_cluster != None:
+        if isinstance(specific_cluster,list):
+            df = df[df.cluster_label.isin(specific_cluster)]
+        else:
+            df = df[df.cluster_label == specific_cluster]
+        title_l = f"Histogram for cluster {specific_cluster} over time"
+        
+    else:
+        title_l = "Histogram for the whole dataset over time"
+    fig = px.histogram(df,[var],histnorm="probability density", color="cluster_label", barmode="overlay",
+                       cumulative=False, animation_frame=animation_frame, title=title_l, marginal="box")
+    #'group', 'overlay' or 'relative'
+    fig.show()
