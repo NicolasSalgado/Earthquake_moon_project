@@ -145,7 +145,26 @@ def countries_value_counts(df):
         print(f"{i:18s}: {v}") 
     # Calculate the number of NAN in country column
     print(f'Number of NAN : {df.Pais.isna().sum()}')
-
+def plot_map_animation(df, specific_clusters=None, animation_frame="year"):
+    df_filt = df[df.cluster_label.isin(specific_clusters)]
+    a = df_filt["cluster_label"].value_counts()
+    df_filt["cluster_count"] = df_filt["cluster_label"].apply(lambda x: a[x])
+    df_filt["norm_mag"] = (df_filt["mag"]-df_filt["mag"].min())/(df_filt["mag"].max()-df_filt["mag"].min()) +0.1
+    fig = px.scatter_mapbox(df_filt, 
+                            lat="latitude", 
+                            lon="longitude", 
+                            hover_name="index",
+                            animation_frame=animation_frame,
+                            hover_data=["index", "cluster_count"],
+                            color="mag",
+                            size="norm_mag",
+                            zoom=0.6, 
+                            height=600,
+                            width=800)
+    fig.update_layout(coloraxis_showscale=True)
+    fig.update_layout(mapbox_style="open-street-map")
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    fig.show()
 def plot_map(df, clusters= False,specific_clusters=None):
     color_scale = [(0, 'orange'), (1,'red')]
     if not clusters:
@@ -373,7 +392,6 @@ def describe_columns(df, columns, step_quantile=0.25, clusters=[]):
     return stats_df.transpose()
 def calculo_distribucion(df, var = "ill_frac_interpolated", num_bins=10, specific_cluster=None):
     if specific_cluster != None:
-        print("Here")
         df = df[df.cluster_label == specific_cluster]
     
     max_ = df[var].max()
@@ -382,12 +400,25 @@ def calculo_distribucion(df, var = "ill_frac_interpolated", num_bins=10, specifi
 
     # Define the edges of the bins
     bin_edges = [min_] + [min_ + i * bin_width for i in range(1, num_bins)] + [max_]
-    bin_edges
     print(var)
+    len_df = len(df)
     for i in range(len(bin_edges)-1):
         df_filt = df[(df[var]>=bin_edges[i])&(df[var]<=bin_edges[i+1])]
-        print(f"Rango ({bin_edges[i]:.3f},{bin_edges[i+1]:.3f}): cantidad total {len(df_filt)}, proporción sobre el total {round(100*len(df_filt)/len(df),3)}%")
-    
+        print(f"Rango ({bin_edges[i]:.3f},{bin_edges[i+1]:.3f}): cantidad total {len(df_filt)}, proporción sobre el total {round(100*len(df_filt)/len_df,3)}%")
+def plot_calculo_distribucion(df, var="ill_frac_interpolated", num_bins=10, specific_cluster=None):
+    if specific_cluster != None:
+        df = df[df.cluster_label == specific_cluster]
+    fig = px.histogram(df,var,histnorm="percent", cumulative=False)
+
+    max_ = df[var].max()
+    min_ = df[var].min()
+    bin_width = (max_ - min_) / num_bins
+    fig.update_traces(xbins=dict( # bins used for histogram
+            start=min_,
+            end=max_,
+            size=bin_width
+        )) 
+    fig.show()
 def plot_monthly(df, years=(1990,2010)):
     df = df[(df.year>=years[0]) & (df.year<=years[1])]
     counts = df.groupby(['year', 'month']).size().reset_index(name='count')
@@ -438,9 +469,11 @@ def histogram_overtime(df,var,specific_cluster=None, animation_frame="year"):
             df = df[df.cluster_label == specific_cluster]
         title_l = f"Histogram for cluster {specific_cluster} over time"
         
+        fig = px.histogram(df,[var],histnorm="probability density", color="cluster_label", barmode="overlay",
+                       cumulative=False, animation_frame=animation_frame, title=title_l, marginal="box") 
     else:
         title_l = "Histogram for the whole dataset over time"
-    fig = px.histogram(df,[var],histnorm="probability density", color="cluster_label", barmode="overlay",
+        fig = px.histogram(df,[var],histnorm="probability density", barmode="overlay",
                        cumulative=False, animation_frame=animation_frame, title=title_l, marginal="box")
     #'group', 'overlay' or 'relative'
     fig.show()
