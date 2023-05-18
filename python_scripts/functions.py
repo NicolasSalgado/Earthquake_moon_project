@@ -388,7 +388,6 @@ def describe_columns(df, columns, step_quantile=0.25, clusters=[]):
     
     # Round values to 2 decimal places
     stats_df = stats_df.round(2)
-    
     return stats_df.transpose()
 def calculo_distribucion(df, var = "ill_frac_interpolated", num_bins=10, specific_cluster=None):
     if specific_cluster != None:
@@ -405,10 +404,10 @@ def calculo_distribucion(df, var = "ill_frac_interpolated", num_bins=10, specifi
     for i in range(len(bin_edges)-1):
         df_filt = df[(df[var]>=bin_edges[i])&(df[var]<=bin_edges[i+1])]
         print(f"Rango ({bin_edges[i]:.3f},{bin_edges[i+1]:.3f}): cantidad total {len(df_filt)}, proporción sobre el total {round(100*len(df_filt)/len_df,3)}%")
-def plot_calculo_distribucion(df, var="ill_frac_interpolated", num_bins=10, specific_cluster=None):
+def plot_calculo_distribucion(df, var="ill_frac_interpolated", histnorm="percent", num_bins=10, specific_cluster=None):
     if specific_cluster != None:
         df = df[df.cluster_label == specific_cluster]
-    fig = px.histogram(df,var,histnorm="percent", cumulative=False)
+    fig = px.histogram(df,var,histnorm= histnorm, cumulative=False)
 
     max_ = df[var].max()
     min_ = df[var].min()
@@ -476,4 +475,13 @@ def histogram_overtime(df,var,specific_cluster=None, animation_frame="year"):
         fig = px.histogram(df,[var],histnorm="probability density", barmode="overlay",
                        cumulative=False, animation_frame=animation_frame, title=title_l, marginal="box")
     #'group', 'overlay' or 'relative'
+    fig.show()
+    
+def histogram_animation(df, var="ill_frac_interpolated", histnorm="percent",animation_frame="year"):
+    if "mag_round" in animation_frame:
+        df["mag_round"] = df.mag.round(decimals=1)
+        df = df.sort_values(by="mag_round")
+    elif "mag" in animation_frame:
+        df = df.sort_values(by="mag")
+    fig = px.histogram(df,"ill_frac_interpolated",histnorm="probability density", cumulative=False, animation_frame=animation_frame)
     fig.show()
