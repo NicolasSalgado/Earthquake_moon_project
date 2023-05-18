@@ -483,5 +483,5 @@ def histogram_animation(df, var="ill_frac_interpolated", histnorm="percent",anim
         df = df.sort_values(by="mag_round")
     elif "mag" in animation_frame:
         df = df.sort_values(by="mag")
-    fig = px.histogram(df,"ill_frac_interpolated",histnorm="probability density", cumulative=False, animation_frame=animation_frame)
+    fig = px.histogram(df,var,histnorm=histnorm, cumulative=False, animation_frame=animation_frame)
     fig.show()
