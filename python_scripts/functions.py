@@ -155,7 +155,7 @@ def plot_map_animation(df, specific_clusters=None, animation_frame="year"):
                             lon="longitude", 
                             hover_name="index",
                             animation_frame=animation_frame,
-                            hover_data=["index", "cluster_count"],
+                            hover_data=["index", "cluster_count", "time", "mag", "ill_frac_interpolated", "depth"],
                             color="mag",
                             size="norm_mag",
                             zoom=0.6, 
@@ -172,7 +172,7 @@ def plot_map(df, clusters= False,specific_clusters=None):
                                 lat="latitude", 
                                 lon="longitude", 
                                 hover_name="index", 
-                                hover_data=["index"],
+                                hover_data=["index", "time", "mag", "ill_frac_interpolated", "depth"],
                                 zoom=0.5, 
                                 height=800,
                                 width=800)
@@ -184,7 +184,7 @@ def plot_map(df, clusters= False,specific_clusters=None):
                                 lat="latitude", 
                                 lon="longitude", 
                                 hover_name="index", 
-                                hover_data=["index", "cluster_count"],
+                                hover_data=["index", "cluster_count","time", "mag", "ill_frac_interpolated", "depth"],
                                 color="cluster_label",
                                 zoom=0.5, 
                                 height=800,
@@ -197,7 +197,7 @@ def plot_map(df, clusters= False,specific_clusters=None):
                         lat="latitude", 
                         lon="longitude", 
                         hover_name="index", 
-                        hover_data=["index", "cluster_count"],
+                        hover_data=["index", "cluster_count", "time", "mag", "ill_frac_interpolated", "depth"],
                         color="cluster_label",
                         zoom=0.5, 
                         height=800,
@@ -477,11 +477,25 @@ def histogram_overtime(df,var,specific_cluster=None, animation_frame="year"):
     #'group', 'overlay' or 'relative'
     fig.show()
     
-def histogram_animation(df, var="ill_frac_interpolated", histnorm="percent",animation_frame="year"):
+def histogram_animation(df, var="ill_frac_interpolated", nbins=None , histnorm="percent",animation_frame="year", range_x=None, range_y=None):
     if "mag_round" in animation_frame:
         df["mag_round"] = df.mag.round(decimals=1)
         df = df.sort_values(by="mag_round")
     elif "mag" in animation_frame:
         df = df.sort_values(by="mag")
-    fig = px.histogram(df,var,histnorm=histnorm, cumulative=False, animation_frame=animation_frame)
+ 
+    fig = px.histogram(df,var,histnorm=histnorm,nbins=nbins ,cumulative=False, animation_frame=animation_frame, range_x=range_x, range_y=range_y)
     fig.show()
+def filter_dataframe(df,var = "ill_frac_interpolated" ,var_range = (0,100), mag_range=(3,10)):
+    df_filt = df[(df[var] <var_range[1])&(df[var] >var_range[0])&(df.mag <mag_range[1])&(df.mag > mag_range[0])]
+    print(f"Dataframe filtrado queda con {len(df_filt)} filas")
+    return df_filt
+
+
+def count_number_days(var="r/km", range_var=[]):
+    df_moon = read_data(file="moon")
+    if len(range_var)>0:
+        cant_filt = len(df_moon[(df_moon[var]<range_var[1])&(df_moon[var]>range_var[0])])
+        cant_total = len(df_moon)
+        print(f"Cantidad de días con {var} entre {range_var[0]} - {range_var[1]} es {cant_filt}")
+        print(f"Porcentaje del total {round(100*cant_filt/cant_total,2)}%")
