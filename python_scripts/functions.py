@@ -502,7 +502,7 @@ def count_number_days(var="r/km", range_var=[]):
         print(f"Cantidad de días con {var} entre {range_var[0]} - {range_var[1]} es {cant_filt}")
         print(f"Porcentaje del total {round(100*cant_filt/cant_total,2)}%")
 
-def filter_by_date(date_filt="2020-05-03", nweeks=4):
+def filter_by_date(df, date_filt="2020-05-03", nweeks=4):
     time_filter = datetime.strptime(date_filt, "%Y-%m-%d")
     df_filt = df[df.time >= time_filter]
     delta = timedelta(days=nweeks*7)
