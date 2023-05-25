@@ -501,3 +501,15 @@ def count_number_days(var="r/km", range_var=[]):
         cant_total = len(df_moon)
         print(f"Cantidad de días con {var} entre {range_var[0]} - {range_var[1]} es {cant_filt}")
         print(f"Porcentaje del total {round(100*cant_filt/cant_total,2)}%")
+
+def filter_by_date(date_filt="2020-05-03", nweeks=4):
+    time_filter = datetime.strptime(date_filt, "%Y-%m-%d")
+    df_filt = df[df.time >= time_filter]
+    delta = timedelta(days=nweeks*7)
+    time_final = delta + time_filter
+    def calcular_semana(fecha):
+        semanas_pasadas = (fecha - time_filter).days // 7
+        return min(semanas_pasadas + 1, nweeks)
+    df_filt = df_filt[df_filt['time'] <= time_final]
+    df_filt['week'] = df_filt['time'].apply(calcular_semana)
+    return df_filt
