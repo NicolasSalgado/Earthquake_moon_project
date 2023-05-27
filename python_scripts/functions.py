@@ -148,7 +148,8 @@ def countries_value_counts(df):
 def plot_map_animation(df, specific_clusters=None, animation_frame="year"):
     if specific_clusters != None:
         df_filt = df[df.cluster_label.isin(specific_clusters)]
-    df_filt = df
+    else:
+        df_filt = df
     a = df_filt["cluster_label"].value_counts()
     df_filt["cluster_count"] = df_filt["cluster_label"].apply(lambda x: a[x])
     df_filt["norm_mag"] = (df_filt["mag"]-df_filt["mag"].min())/(df_filt["mag"].max()-df_filt["mag"].min()) +0.1
