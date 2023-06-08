@@ -111,7 +111,7 @@ To execute a cell in jupyter notebook, select the cell and press CTRL + Enter.
 The `main_run.ipynb` file is used to run the program. This file is executed per cell, executing the first two being a requirement for the others to make sense.
 The first cell is responsible for importing the packages that will be used, and the second importing the minable data.                                                                                                      
 
-After importing packages and reading files, there are different functions that apply changes or filters to the data frame, change labels (period, groups by magnitude, etc.),
+After importing packages and reading files, there are different functions that apply changes or filters the dataframe, change labels (period, groups by magnitude, etc.),
 generate histograms, plot map, trend calculations, estimated distribution, all distinguishing by cluster or filtering by some of them. All these functions have different parameters that allow checking
 for different data segments or others.
 
@@ -237,7 +237,7 @@ Below we leave the functions used with their parameters.
         * df: Dataframe.
         * var: (str) name of the column to use.
         * num_bins: Number of bins to create.
-        * specific_cluster: None by default. Number of clsuter label to filter.
+        * specific_cluster: None by default. Number of cluster label to filter.
 
     * Returns: None
 
@@ -286,3 +286,27 @@ Below we leave the functions used with their parameters.
         * nweeks: (int) By default 4.Number of weeks.
 
     * Returns: filtered dataframe.
+    
+    
+## 4.0 Requirments
+Computational requirements
+
+- Download Python 3.8 or higher
+- Jupyter Notebook
+
+It is recommended to use the Anaconda *https://www.anaconda.com/download* distribution that contains Python, Jupyter and the libraries used in the program.
+Otherwise, the two requirements listed above would need to install the packages used.
+
+Here is a guide to installation of anaconda *https://docs.anaconda.com/free/anaconda/install/windows/* 
+
+After the installation, you should have on your computer all the requirements to run the project.
+Write in the search engine of the operating system "jupyter notebook".
+![Alt text](./df/input/img/jupyter_notebook_ss.png)
+
+After selecting the application a terminal will open and later in the web browser a local page where by searching your
+file directory you will be able to find the project and open main_run.
+![Alt text](./df/input/img/proyecto_jupyter.png)
+
+
+Where finally the cells and functions previously described can be executed.
+![Alt text](./df/input/img/main_run_ss.png)
