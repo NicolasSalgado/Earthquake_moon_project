@@ -32,7 +32,16 @@ import warnings
 warnings.filterwarnings('ignore')
 
 random.seed(0)
+random.seed(0)
 def read_data(file="minable"):
+    """
+    Function to read the data.
+    Args:
+        file: (str) name of the dataset to read, by default "minable". Other options "earth", "moon".
+
+    Returns: (DataFrame) dataframe.
+
+    """
     if file == "minable":
         minable = pd.read_csv(getPath(FILES.minable), index_col=0)
         minable['time']= pd.to_datetime(minable['time'])
@@ -65,7 +74,14 @@ def read_data(file="minable"):
         print(f"Error: {file} is not found. this function only work with 'minable', 'earth' and 'moon'" )
 
 def magnitude_segmentation(df, mag_seg):
+    """
+    Args:
+        df: (DataFrame) dataframe to use
+        mag_seg: Magnitudes groups to label each earthquake
 
+    Returns: Dataframe with MAG_SEG column generated according to the mag_seg
+
+    """
     df['MAG_SEG'] = [0]*len(df)
     for key, value in mag_seg.items():
         df.loc[(df['mag']<value[1]) & (df['mag']>=value[0]), 'MAG_SEG'] = key
@@ -73,6 +89,14 @@ def magnitude_segmentation(df, mag_seg):
     return df
 
 def period_calculation(df, period_length=10):
+    """
+    Args:
+        df: Dataframe with data
+        period_length: Period in years to generate the grouping
+
+    Returns: Dataframe with column PERIOD generated.
+
+    """
     # according to the period length select we create the labels for each row in the dataset.
     start_year = df.time.iloc[0].year
     end_year = df.time.iloc[-1].year
@@ -106,6 +130,16 @@ def period_calculation(df, period_length=10):
     return df
 
 def histogram_monthly(df, date_off_set=False, bool_mag_seg=True):
+    """
+    Create an histogram plot grouped by month
+    Args:
+        df: Dataframe
+        date_off_set: Boolean(True,False), by default False
+        bool_mag_seg: Boolean(True, False), by default True
+
+    Returns: None
+
+    """
     if date_off_set:
         print("Here we dateoffset -5 days")
         df['NewDate'] = df['time'] + pd.offsets.DateOffset(days=-5)
@@ -126,12 +160,30 @@ def histogram_monthly(df, date_off_set=False, bool_mag_seg=True):
     fig.show()
 
 def histogram_countries(df, countries):
+    """
+    Create an histogram plot grouped by the countries given
+    Args:
+        df: Dataframe
+        countries: (list)[] countries to show in the histogram
+
+    Returns: None
+
+    """
     df_ = df[df.Pais.isin(countries)]
     fig = px.histogram(df_, x="Pais",
                 color='PERIOD', barmode='group',
                 height=400)
     fig.show()
 def histogram_cluster(df, clusters):
+    """
+    Create an histogram plot filtered by clusters given
+    Args:
+        df: Dataframe
+        clusters: (list) [] name of countries to filter
+
+    Returns: None
+
+    """
     df_ = df[df.cluster_label.isin(clusters)]
     df_.cluster_label = df_.cluster_label.astype(str) 
     fig = px.histogram(df_, x="cluster_label",
@@ -139,6 +191,14 @@ def histogram_cluster(df, clusters):
                 height=400)
     fig.show()
 def countries_value_counts(df):
+    """
+    Calculate number of earthquake by country
+    Args:
+        df: Dataframe
+
+    Returns: None
+
+    """
     # To see number of earthquakes for each country.
     df.Pais = df.Pais.fillna("No_Country")
     for i,v in df.Pais.value_counts().items():
@@ -146,6 +206,15 @@ def countries_value_counts(df):
     # Calculate the number of NAN in country column
     print(f'Number of NAN : {df.Pais.isna().sum()}')
 def plot_map_animation(df, specific_clusters=None, animation_frame="year"):
+    """
+    Plot map  enable to frame by column (year by default) and specifics clusters.
+    Args:
+        df: Dataframe
+        specific_clusters: (list ) By default None. List of clusters to filter
+        animation_frame: column name to execute the frame
+
+    Returns: None
+    """
     if specific_clusters != None:
         df_filt = df[df.cluster_label.isin(specific_clusters)]
     else:
@@ -169,6 +238,15 @@ def plot_map_animation(df, specific_clusters=None, animation_frame="year"):
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
     fig.show()
 def plot_map(df, clusters= False,specific_clusters=None):
+    """
+    Plot map distinguish by cluster and specific clusters.
+    Args:
+        df: Dataframe
+        clusters: (Boolean) By default False. Whether to color earthquakes by cluster or not.
+        specific_clusters:(List) By default None. Clusters to filter.
+
+    Returns: None
+    """
     color_scale = [(0, 'orange'), (1,'red')]
     if not clusters:
         fig = px.scatter_mapbox(df, 
@@ -212,12 +290,30 @@ def plot_map(df, clusters= False,specific_clusters=None):
     fig.show()
     
 def trendline(data, order=1):
+    """
+    To calculate trendile of a series.
+    Args:
+        data: Series of data.
+        order: Order of the trendline to calculate. By default 1.
+
+    Returns: (float): Slope
+
+    """
     x_ = np.arange(0,len(data))
     coeffs = np.polyfit(x_, list(data), order)
     slope = coeffs[0]
     return float(slope)
 
 def trendline_calculations(df, cluster = False):
+    """
+    Trendline calcualtions for PERIOD label.
+    Args:
+        df: Dataframe
+        cluster: (boolean). Whether to do the calculation by cluster or not.
+
+    Returns:trendline results
+
+    """
     if cluster:
         neg_cluster ={}
         trend_results_cluster = {}
@@ -259,6 +355,15 @@ def trendline_calculations(df, cluster = False):
         return trend_results
 
 def calculate_clustering(df, normalized=False):
+    """
+    Function to calculate clustering of the dataframe based on latitude and longitude
+    Args:
+        df: Dataframe
+        normalized: (Boolean). Whether to normalized data or not before the clustering.
+
+    Returns:Dataframe with cluster_label as new column.
+
+    """
     df.dropna(axis=0,how='any',subset=['latitude','longitude'],inplace=True) 
     coords = df[['latitude', 'longitude']]
     if normalized:
@@ -272,6 +377,14 @@ def calculate_clustering(df, normalized=False):
     return df
 
 def best_number_of_clusters2(coords):
+    """
+    Function to calculate based on Elbow curve plot the best number of clusters.
+    Args:
+        coords: Data
+
+    Returns: None
+
+    """
     K_clusters = range(10,70)
     kmeans = [KMeans(n_clusters=i) for i in K_clusters]
     Y_axis = coords[['latitude']]
@@ -304,6 +417,15 @@ def best_number_of_clusters1(coords):
     plt.show()
 
 def specific_cluster_info(df, cluster):
+    """
+    Gives information of trend and proportion of an specific cluster
+    Args:
+        df: Dataframe
+        cluster: (int) Cluster label.
+
+    Returns: None
+
+    """
     df_filt = df[df.cluster_label == cluster]
     print(f"Cantidad de data del cluster {cluster} es {len(df_filt)}")
     series_totrend = df_filt.PERIOD.value_counts()
@@ -339,6 +461,16 @@ def interpolate_position(original_position, final_position, datetime):
     return interpolated_position
 
 def apply_interpolation(df_merged, df_moon, vars_names=["r/km"]):
+    """
+    Use interpoalte_position to interpolate the whole data of earthquakes according to the moon database.
+    Args:
+        df_merged: Dataframe with earthquake data
+        df_moon:  Dataframe with moon data
+        vars_names: (List): By default["r/km"]. List of variables to interpolate. Must be in moon database.
+
+    Returns: dataframe with columns interpolated.
+
+    """
     for var_name in vars_names:
         df_merged[f"{var_name}_interpolated"] = [0]*len(df_merged)
     for index, row in df_merged.iterrows():
@@ -392,7 +524,18 @@ def describe_columns(df, columns, step_quantile=0.25, clusters=[]):
     # Round values to 2 decimal places
     stats_df = stats_df.round(2)
     return stats_df.transpose()
-def calculo_distribucion(df, var = "ill_frac_interpolated", num_bins=10, specific_cluster=None):
+def calculo_distribution(df, var = "ill_frac_interpolated", num_bins=10, specific_cluster=None):
+    """
+    Calculates the proportion of earthquakes given a range.
+    Args:
+        df: Dataframe
+        var: (str) name of the column to use
+        num_bins: Number of bins to create
+        specific_cluster: None by default. Number of clsuter label to filter
+
+    Returns: None
+
+    """
     if specific_cluster != None:
         df = df[df.cluster_label == specific_cluster]
     
@@ -407,7 +550,19 @@ def calculo_distribucion(df, var = "ill_frac_interpolated", num_bins=10, specifi
     for i in range(len(bin_edges)-1):
         df_filt = df[(df[var]>=bin_edges[i])&(df[var]<=bin_edges[i+1])]
         print(f"Rango ({bin_edges[i]:.3f},{bin_edges[i+1]:.3f}): cantidad total {len(df_filt)}, proporción sobre el total {round(100*len(df_filt)/len_df,3)}%")
-def plot_calculo_distribucion(df, var="ill_frac_interpolated", histnorm="percent", num_bins=10, specific_cluster=None):
+def plot_calculo_distribution(df, var="ill_frac_interpolated", histnorm="percent", num_bins=10, specific_cluster=None):
+    """
+    Histogram plot to the proportion distribution calcualted for certain number of bins
+    Args:
+        df: Dataframe
+        var: (str) name of the column to use
+        histnorm: (str). By default "percent". How to calcualte y-axis.
+        num_bins: (int). By default 10. Number of bins.
+        specific_cluster: (int) By default None. Whether filter for specific cluster.
+
+    Returns: None
+
+    """
     if specific_cluster != None:
         df = df[df.cluster_label == specific_cluster]
     fig = px.histogram(df,var,histnorm= histnorm, cumulative=False)
@@ -422,6 +577,15 @@ def plot_calculo_distribucion(df, var="ill_frac_interpolated", histnorm="percent
         )) 
     fig.show()
 def plot_monthly(df, years=(1990,2010)):
+    """
+    Bar plot monthly over a period of years
+    Args:
+        df: Dataframe
+        years: (tuple). (Year beginning, Year end)
+
+    Returns:
+
+    """
     df = df[(df.year>=years[0]) & (df.year<=years[1])]
     counts = df.groupby(['year', 'month']).size().reset_index(name='count')
 
@@ -453,6 +617,16 @@ def plot_monthly(df, years=(1990,2010)):
     fig.show()
 
 def distribution_plot(df, var="ill_frac_interpolated", specific_cluster=None):
+    """
+    Plot of kernel density estimate of a certain variable
+    Args:
+        df: Dataframe
+        var: column to calculate. By default "ill_frac_interpolated".
+        specific_cluster: (int) By default None. Whether to filter by a cluster.
+
+    Returns: None
+
+    """
     if specific_cluster != None:
         df = df[df["cluster_label"]==specific_cluster]
 
@@ -464,6 +638,17 @@ def distribution_plot(df, var="ill_frac_interpolated", specific_cluster=None):
     #fig = ff.create_distplot([df[var]],["var"])
     #fig.show()
 def histogram_overtime(df,var,specific_cluster=None, animation_frame="year"):
+    """
+    Histogram plot with animation frame over a column. By default over year.
+    Args:
+        df: Dataframe
+        var: name of the column to use
+        specific_cluster: (int) By default None. Whether to filter by a cluster.
+        animation_frame: (str) By default "year". Label of column to frame.
+
+    Returns: None
+
+    """
     if specific_cluster != None:
         if isinstance(specific_cluster,list):
             df = df[df.cluster_label.isin(specific_cluster)]
@@ -481,6 +666,20 @@ def histogram_overtime(df,var,specific_cluster=None, animation_frame="year"):
     fig.show()
     
 def histogram_animation(df, var="ill_frac_interpolated", nbins=None , histnorm="percent",animation_frame="year", range_x=None, range_y=None):
+    """
+    Histogram plot over a var with animation frame.
+    Args:
+        df: Dataframe
+        var: (str) By default "ill_frac_interpolated".  name of the column to use
+        nbins: (int). By default None. Number of bins.
+        histnorm: (str). By default "percent". How to calcualte y-axis.
+        animation_frame: (str) By default "year". Label of column to frame.
+        range_x: (tuple) By default None. If None use range by default, if you give a tuple use the tuple.
+        range_y: (tuple) By default None. If None use range by default, if you give a tuple use the tuple.
+
+    Returns: None
+
+    """
     if "mag_round" in animation_frame:
         df["mag_round"] = df.mag.round(decimals=1)
         df = df.sort_values(by="mag_round")
@@ -490,12 +689,32 @@ def histogram_animation(df, var="ill_frac_interpolated", nbins=None , histnorm="
     fig = px.histogram(df,var,histnorm=histnorm,nbins=nbins ,cumulative=False, animation_frame=animation_frame, range_x=range_x, range_y=range_y)
     fig.show()
 def filter_dataframe(df,var = "ill_frac_interpolated" ,var_range = (0,100), mag_range=(3,10)):
+    """
+    Filter the df according to a var y magnitude over a certain range.
+    Args:
+        df: Dataframe.
+        var: (str) By default "ill_frac_interpolated".  name of the column to use
+        var_range: (tuple) By default (0,100). Range to filter the var.
+        mag_range: (tuple) By default (3,10). Range to filter the magnitude var.
+
+    Returns: Filtered Dataframe.
+
+    """
     df_filt = df[(df[var] <var_range[1])&(df[var] >var_range[0])&(df.mag <mag_range[1])&(df.mag > mag_range[0])]
     print(f"Dataframe filtrado queda con {len(df_filt)} filas")
     return df_filt
 
 
 def count_number_days(var="r/km", range_var=[]):
+    """
+    Calculate the number of days that a certaing variable (moon data) is in a range.
+    Args:
+        var: (str) By default "r/km". Column to use.
+        range_var: list. Range to use.
+
+    Returns:None
+
+    """
     df_moon = read_data(file="moon")
     if len(range_var)>0:
         cant_filt = len(df_moon[(df_moon[var]<range_var[1])&(df_moon[var]>range_var[0])])
@@ -504,6 +723,16 @@ def count_number_days(var="r/km", range_var=[]):
         print(f"Porcentaje del total {round(100*cant_filt/cant_total,2)}%")
 
 def filter_by_date(df, date_filt="2020-05-03", nweeks=4):
+    """
+    Filter dataframe over a Initial date and a number of weeks ahead
+    Args:
+        df: Dataframe
+        date_filt: (str) By default "2020-05-03". Format "YYYY-MM-DD".
+        nweeks: (int) By default 4.Number of weeks.
+
+    Returns: filtered dataframe
+
+    """
     time_filter = datetime.strptime(date_filt, "%Y-%m-%d")
     df_filt = df[df.time >= time_filter]
     delta = timedelta(days=nweeks*7)

@@ -104,5 +104,185 @@ interpolated.
     | `MAG_SEG`    | `dec_interpoalated`|
     | `NewDate` ||
 
-## 3.0 Execution
+## 3.0 Execution 
+To execute a cell in jupyter notebook, select the cell and press CTRL + Enter.
 
+
+The `main_run.ipynb` file is used to run the program. This file is executed per cell, executing the first two being a requirement for the others to make sense.
+The first cell is responsible for importing the packages that will be used, and the second importing the minable data.                                                                                                      
+
+After importing packages and reading files, there are different functions that apply changes or filters to the data frame, change labels (period, groups by magnitude, etc.),
+generate histograms, plot map, trend calculations, estimated distribution, all distinguishing by cluster or filtering by some of them. All these functions have different parameters that allow checking
+for different data segments or others.
+
+Below we leave the functions used with their parameters.
+
+1) **read_data**: Function to read the data.
+   
+    * Args:
+        * file: (str) name of the dataset to read, by default "minable". Other options "earth", "moon".
+
+    * Returns: (DataFrame) dataframe.
+2) **filter_dataframe**: Filter the df according to a var y magnitude over a certain range.
+    * Args:
+        * df: Dataframe.
+        * var: (str) By default "ill_frac_interpolated".  name of the column to use.
+        * var_range: (tuple) By default (0,100). Range to filter the var.
+        * mag_range: (tuple) By default (3,10). Range to filter the magnitude var.
+
+    * Returns: Filtered Dataframe.
+
+3) **period_calculations**: Create the period group column.
+   * Args:
+        *df: Dataframe with data.
+        * period_length: PERIOD in years to generate the grouping.
+
+    * Returns: Dataframe with column PERIOD generated.
+
+4) **magnitude_segmentation**:  Create the  MAG_SEG group column.
+    * Args:
+        * df: (DataFrame) dataframe to use.
+        * mag_seg: Magnitudes groups to label each earthquake.
+
+    * Returns: Dataframe with MAG_SEG column generated according to the mag_seg.
+
+5) **histogram monthly**: Create a histogram plot grouped by month.
+    * Args:
+        * df: Dataframe.
+        * date_off_set: Boolean(True,False), by default False.
+        * bool_mag_seg: Boolean(True, False), by default True.
+
+    * Returns: None.
+
+6) **plot_monthly**: Bar plot monthly over a period of years.
+    * Args:
+        * df: Dataframe.
+        * years: (tuple). (Year beginning, Year end).
+
+    * Returns: None.
+
+7) **countries_value_counts**: Calculate number of earthquake by country.
+    * Args:
+        * df: Dataframe.
+
+    * Returns: None.
+
+8) **histogram_countries**: Create an histogram plot grouped by the countries given.
+    * Args:
+        * df: Dataframe.
+        * countries: (list)[] countries to show in the histogram.
+
+    * Returns: None.
+
+9) **plot_map** : Plot map distinguish by cluster and specific clusters.
+    * Args:
+        * df: Dataframe.
+        * clusters: (Boolean) By default False. Whether to color earthquakes by cluster or not.
+        * specific_clusters:(List) By default None. Clusters to filter.
+
+    * Returns: None
+
+10) **trendline_calculations**: Trendline calcualtions for PERIOD label.
+    * Args:
+        * df: Dataframe.
+        * cluster: (boolean). Whether to do the calculation by cluster or not.
+
+    * Returns:trendline results
+
+11) **plot_map_animation**: Plot map  enable to frame by column (year by default) and specifics clusters.
+    * Args:
+        * df: Dataframe.
+        * specific_clusters: (list ) By default None. List of clusters to filter.
+        * animation_frame: column name to execute the frame.
+
+    * Returns: None
+
+12) **specific_cluster_info**: Gives information of trend and proportion of an specific cluster.
+    * Args:
+        * df: Dataframe.
+        * cluster: (int) Cluster label.
+
+    * Returns: None.
+
+13) **histogram_cluster**: Create an histogram plot filtered by clusters given.
+    * Args:
+        * df: Dataframe.
+        * clusters: (list) [] name of countries to filter.
+
+    * Returns: None.
+
+
+14) **histogram_overtime**: Histogram plot with animation frame over a column. By default over year.
+    * Args:
+        * df: Dataframe.
+        * var: name of the column to use.
+        * specific_cluster: (int) By default None. Whether to filter by a cluster.
+        * animation_frame: (str) By default "year". Label of column to frame.
+
+    * Returns: None
+
+15) **describe_columns**: Computes descriptive statistics of each column in a pandas DataFrame.
+    
+    * Args:
+        * df (pandas.DataFrame): A pandas DataFrame object.
+        * columns (list): list of columns.
+        * step_quantile (float): The step between each quantile to compute. Default is 0.25.
+        * clusters (list): list of clusters of interest.
+    
+    * Returns:
+        * (pandas.DataFrame): A DataFrame object containing the computed statistics for each column.
+
+16) **calculo_distribution**: Calculates the proportion of earthquakes given a range.
+    * Args:
+        * df: Dataframe.
+        * var: (str) name of the column to use.
+        * num_bins: Number of bins to create.
+        * specific_cluster: None by default. Number of clsuter label to filter.
+
+    * Returns: None
+
+17) **distribution_plot**: Plot of kernel density estimate of a certain variable.
+    * Args:
+        * df: Dataframe.
+        * var: column to calculate. By default "ill_frac_interpolated".
+        * specific_cluster: (int) By default None. Whether to filter by a cluster.
+
+    * Returns: None.
+
+18) **plot_calculo_distribution**: Histogram plot to the proportion distribution calcualted for certain number of bins.
+    * Args:
+        * df: Dataframe
+        * var: (str) name of the column to use.
+        * histnorm: (str). By default "percent". How to calcualte y-axis.
+        * num_bins: (int). By default 10. Number of bins.
+        * specific_cluster: (int) By default None. Whether filter for specific cluster.
+
+    * Returns: None.
+
+19) **histogram_animation**: Histogram plot over a var with animation frame.
+    * Args:
+        * df: Dataframe.
+        * var: (str) By default "ill_frac_interpolated".  name of the column to use.
+        * nbins: (int). By default None. Number of bins.
+        * histnorm: (str). By default "percent". How to calcualte y-axis.
+        * animation_frame: (str) By default "year". Label of column to frame.
+        * range_x: (tuple) By default None. If None use range by default, if you give a tuple use the tuple.
+        * range_y: (tuple) By default None. If None use range by default, if you give a tuple use the tuple.
+
+    * Returns: None.
+
+
+20) **count_number_days**: Calculate the number of days that a certaing variable (moon data) is in a range.
+    * Args:
+        * var: (str) By default "r/km". Column to use.
+        * range_var: list. Range to use.
+
+    * Returns:None
+
+21) **filter_by_date**: Filter dataframe over a initial date and a number of weeks ahead.
+    * Args:
+        * df: Dataframe.
+        * date_filt: (str) By default "2020-05-03". Format "YYYY-MM-DD".
+        * nweeks: (int) By default 4.Number of weeks.
+
+    * Returns: filtered dataframe.
