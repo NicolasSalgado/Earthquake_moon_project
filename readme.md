@@ -241,9 +241,10 @@ Below we leave the functions used with their parameters.
 
     * Returns: None
 
-17) **distribution_plot**: Plot of kernel density estimate of a certain variable.
+17) **distribution_plot**: Plot of kernel density estimate of a certain variable. In case you input two datframes to compare, make sure that the first one be earthquake data and the second one moon data.
     * Args:
-        * df: Dataframe.
+        * df: Dataframe. Minable, consolidated earthquake and moon.
+        * df1: Dataframe. By default None. Moon database
         * var: column to calculate. By default "ill_frac_interpolated".
         * specific_cluster: (int) By default None. Whether to filter by a cluster.
 

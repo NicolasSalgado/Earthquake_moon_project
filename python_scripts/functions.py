@@ -616,7 +616,7 @@ def plot_monthly(df, years=(1990,2010)):
                     yaxis_title='Count')
     fig.show()
 
-def distribution_plot(df, var="ill_frac_interpolated", specific_cluster=None):
+def distribution_plot(df, df1=None, var="ill_frac_interpolated", specific_cluster=None):
     """
     Plot of kernel density estimate of a certain variable
     Args:
@@ -629,11 +629,14 @@ def distribution_plot(df, var="ill_frac_interpolated", specific_cluster=None):
     """
     if specific_cluster != None:
         df = df[df["cluster_label"]==specific_cluster]
-
-    ax = df[var].plot(kind='kde', figsize=(25,15), title=f"Kernel Density Estimate of {var}")
+    
+    ax = df[var].plot(kind='kde', figsize=(25,15))
     ax.axvline(df[var].min(), color='red', linestyle='--')
     ax.axvline(df[var].max(), color='red', linestyle='--')
-
+    plt.title(f"Kernel Density Estimate of {var}",fontsize = 20)
+    if isinstance(df1, pd.DataFrame):
+        df1[var].plot(kind='kde', figsize=(25,15))
+        plt.legend(["Earthquake_data", "Lower Bound", "Upper Bound", "Moon_data"], prop={'size': 15})
     plt.show()
     #fig = ff.create_distplot([df[var]],["var"])
     #fig.show()
