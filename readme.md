@@ -309,5 +309,5 @@ file directory you will be able to find the project and open main_run.
 ![Alt text](./df/input/img/proyecto_jupyter.png)
 
 
-Where finally the cells and functions previously described can be executed.
+Where finally the cells and functions previously described can be executed pressing CTRL + ENTER.
 ![Alt text](./df/input/img/main_run_ss.png)
