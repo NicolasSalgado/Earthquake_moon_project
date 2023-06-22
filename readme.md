@@ -1,5 +1,5 @@
 
-# Earthquake_moon project
+# 1.0 Earthquake_moon project
 
 This project is designed to analyze earthquake, solar and lunar gravitational data with the option of managing different graphs, histnorms, tables, trendlines for analysis. For this we consider in the earthquake data latitude and longitude, magnitude, depth, time, periods of the year, groupings by magnitude, groupings of earthquake clusters . On the side of the moon data we take into consideration the data coming from ... and we use the fraction of illumination, declination, and distance (r/km).
 
@@ -8,14 +8,21 @@ Robert Bostrom in Tectonic Consequences of the Earth’s Rotation notes that:
 
 There is not a more perfect measurement of an “actual external gravity” than the phases of the moon. When the sun, the moon and the Earth are in syzygy , “actual external gravity” is at maximum and very well measured. It is unfortunate that 50 years of data amounts to less than 3 Earth/moon/sun perigean cycles each lasting 18.6 years. Contrast this to the well measured, almost 300 years of 25 solar cycles each lasting approximately 11 years.
 
-Carlo Doglioni, notes in Polarized Plate tectonics, that it is an Earth’s scale phenomenology, and the energy necessary for its existence is not concentrated in limited zones (e.g., subduction zones), but it is contemporaneously distributed all over the whole Earth’s lithosphere, like the Earth’s rotation. Romashkova (2009) has recently shown how the planet seismicity indicates that the Earth’s lithosphere can be considered as a single whole. Only the global seismicity follows the Gutenberg-Richter law, while this simple relation does not hold when considering smaller portions of the Earth (Molchan, Kronrod, & Panza, 1997; Nekrasova & Kossobokov, 2006). The only mechanism that acts globally on the lithosphere and mantle is the Earth’s rotation.  
+Carlo Doglioni, notes in Polarized Plate tectonics, that it is an Earth’s scale phenomenology, and the energy necessary for its existence is not concentrated in limited zones (e.g., subduction zones), but it is contemporaneously distributed all over the whole Earth’s lithosphere, like the Earth’s rotation. Romashkova (2009) has recently shown how the planet seismicity indicates that the Earth’s lithosphere can be considered as a single whole. Only the global seismicity follows the Gutenberg-Richter law, while this simple relation does not hold when considering smaller portions of the Earth (Molchan, Kronrod, & Panza, 1997; Nekrasova & Kossobokov, 2006). The only mechanism that acts globally on the lithosphere and mantle is the Earth’s rotation. We also propose that the gravitational effects of the sun and the moon act globally on the Earth’s lithosphere and mantle as evidenced by this data analysis project.
+
+
 <!--AND THE MOON AND SUN-->
 
-Based on the previous discussions, the observed phenomenology of plate tectonics confirms mantle convection, (there are waves on the ocean thus the ocean makes waves) but it appears to be governed from the top, i.e., an astronomically sheared lithosphere travels westward along the TE, facilitated by the decoupling allowed by the presence, at the top of the asthenosphere, of a continuous global flow within the Earth low-viscosity LVZ that is in superadiabatic conditions (Figure 86). 
-Doglioni continues with, “The tidal forces are too small to generate earthquakes within continental areas, and for this reason they have been disregarded for long time.”  Continental Clusters 58, 40, 18, 9, 16, 35, 22, 39, 
+Doglioni continues in Polarized Plate Tectonics that based on the previous discussions, the observed phenomenology of plate tectonics confirms mantle convection, (there are waves on the ocean thus the ocean makes waves) but it appears to be governed from the top, i.e., an astronomically sheared lithosphere travels westward along the TE, facilitated by the decoupling allowed by the presence, at the top of the asthenosphere, of a continuous global flow within the Earth low-viscosity LVZ that is in superadiabatic conditions (Figure 86). 
+Doglioni continues with, “The tidal forces are too small to generate earthquakes within continental areas, and for this reason they have been disregarded for long time.” This data analysis project demonstrates clearly that the tidal forces of the sun and moon do generate earthquakes within continental  areas as evidenced by the illuminated fraction graphs of the  continental clusters 58, 40, 18, 9, 16, 35, 22, 39.
+## 2.0 Source Data
+
+For Lunar data we employ the spreadsheet created by Jurgen Giesen, GeoAstro.de/moonpos which uses the astronomical algorithms by Jean Meeus. These algorithms provide calculations for daily lunar phase, distance and declination for any year between 1950 and 2050. 
 
 
-## 1.0 Directory Project
+For earthquake data we use the United States Geological Survey (USGS) database of all earthquakes on the globe Earth greater than 4,5 magnitude. To date there have been more than 264.000 earthquakes 4,5 mag and greater since the first of January 1973. This provides for a very thorough snapshot of the current state of lithosphere movement of the Earth.
+
+## 3.0 Directory Project
 
 ```
 📦 Earthquake_project
@@ -32,7 +39,7 @@ Doglioni continues with, “The tidal forces are too small to generate earthquak
    └─ functions.py
 ```
 
-### 1.1 df
+### 3.1 df
 This folder contains the files that are used and the paths that are used later in the scripts.
 
 In `input/` we have the `earthquakes.xlsx` and `moon_data.xlsx` files. In `output/` is contained
@@ -42,7 +49,7 @@ In `manage_file.py` is a script that manages the path to then read and write to 
 In case you want to use new files, it is recommended to leave them assigned with the names that are currently used,
 but in case of changing them, the name must be changed in this file
 
-### 1.2 python_scripts
+### 3.2 python_scripts
 This folder contains the python executables.
 
 * `main_run.ipynb`: Jupyter notebook containing the main executables for testing and reviewing functionality. Runs the functions in functions.py, running data reading, filters, histograms, calculations, and others.
@@ -51,7 +58,7 @@ This folder contains the python executables.
 
 * `new_database.ipynb`: In case of updating the earthquake and moon tables, this script must be run to generate the consolidated mineable again. It is important that the structure and column names are the same.
 
-## 2.0 Variables
+## 4.0 Variables
 The variables contained in the input and output tables are the following
 * Eartquake data
     
@@ -104,7 +111,7 @@ interpolated.
     | `MAG_SEG`    | `dec_interpoalated`|
     | `NewDate` ||
 
-## 3.0 Execution 
+## 5.0 Execution 
 To execute a cell in jupyter notebook, select the cell and press CTRL + Enter.
 
 
@@ -289,7 +296,7 @@ Below we leave the functions used with their parameters.
     * Returns: filtered dataframe.
     
     
-## 4.0 Requirments
+## 6.0 Requirments
 Computational requirements
 
 - Download Python 3.8 or higher
