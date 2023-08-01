@@ -73,19 +73,21 @@ def read_data(file="minable"):
     else:
         print(f"Error: {file} is not found. this function only work with 'minable', 'earth' and 'moon'" )
 
-def magnitude_segmentation(df, mag_seg):
+def variable_segmentation(df, var_seg,  var="mag"):
     """
     Args:
         df: (DataFrame) dataframe to use
-        mag_seg: Magnitudes groups to label each earthquake
+        var_seg: Magnitudes groups to label each earthquake
+        var: Str with the variable to create segmentation
 
     Returns: Dataframe with MAG_SEG column generated according to the mag_seg
 
     """
-    df['MAG_SEG'] = [0]*len(df)
-    for key, value in mag_seg.items():
-        df.loc[(df['mag']<value[1]) & (df['mag']>=value[0]), 'MAG_SEG'] = key
-    print(df["MAG_SEG"].value_counts())
+    
+    df[f'{var.upper()}_SEG'] = [0]*len(df)
+    for key, value in var_seg.items():
+        df.loc[(df[var]<value[1]) & (df[var]>=value[0]), f'{var.upper()}_SEG'] = key
+    print(df[f'{var.upper()}_SEG'].value_counts())
     return df
 
 def period_calculation(df, period_length=10):
