@@ -3,6 +3,9 @@
 
 This project is designed to analyze earthquake, solar and lunar gravitational data with the option of managing different graphs, histnorms, tables, trendlines for analysis. For this we consider in the earthquake data latitude and longitude, magnitude, depth, time, periods of the year, groupings by magnitude, groupings of earthquake clusters . On the side of the moon data we take into consideration the data coming from ... and we use the fraction of illumination, declination, and distance (r/km).
 
+We have 60 clusters, for each of them the functions described below work and allow analysis flexibility.
+![Alt text](./df/input/img/cluster_image.jpeg)
+
 Robert Bostrom in Tectonic Consequences of the Earth’s Rotation notes that: 
 > “ Von Helmholtz identified the species of motion (vortical) with respect to which there is no velocity potential in 1857. …, his insight has been disregarded by those of us struck by a tidal energy flux, astronomically well measured, that has seemed to “disappear” within the Earth. For scale, this is at least as great as that released in global seismicity. It may be desirable to examine the effects of actual external gravity, rather than those of a geocentric field that might well be attributed to Ptolemy. “
 
