@@ -7,7 +7,7 @@ class FILES:
     input_earthquake = 'input/earthquakes.xlsx'
     input_moon = 'input/moon_data.xlsx'
     minable = 'output/minable.csv'
-
+    input_tidal = 'input/tidal_acceleration.xlsx'
 def make_dir_exist(file_path: str):
     destination_path = Path(file_path).parent.absolute()
     if destination_path.exists() is False:
