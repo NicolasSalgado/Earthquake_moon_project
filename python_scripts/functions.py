@@ -61,14 +61,14 @@ def read_data(file="minable"):
         return df
     elif file == "moon":
         df_moon = pd.read_excel(getPath(FILES.input_moon))
-        df_moon.columns = ["year", "day", "month", "acum_day", "ill_frac", "r/km", "dec", "ra/h", "ra/°"]
-        df_moon.year = df_moon.year.replace({"common year": np.NaN, "leap year": np.NaN})
-        df_moon.year.ffill(inplace=True)
-        df_moon.year = df_moon.year.astype(int)
-        df_moon.dropna(inplace=True)
-        df_moon.month = df_moon.month.astype(int)
-        df_moon.day= df_moon.day.astype(int)
-        df_moon.acum_day= df_moon.acum_day.astype(int)
+        #df_moon.columns = ["year", "day", "month", "acum_day", "ill_frac", "r/km", "dec", "ra/h", "ra/°", "td_acc"]
+        #df_moon.year = df_moon.year.replace({"common year": np.NaN, "leap year": np.NaN})
+        #df_moon.year.ffill(inplace=True)
+        #df_moon.year = df_moon.year.astype(int)
+        #df_moon.dropna(inplace=True)
+        #df_moon.month = df_moon.month.astype(int)
+        #df_moon.day= df_moon.day.astype(int)
+        #df_moon.acum_day= df_moon.acum_day.astype(int)
         return df_moon
     else:
         print(f"Error: {file} is not found. this function only work with 'minable', 'earth' and 'moon'" )
@@ -250,6 +250,7 @@ def plot_map(df, clusters= False,specific_clusters=None):
     Returns: None
     """
     color_scale = [(0, 'orange'), (1,'red')]
+    df = df.reset_index()
     if not clusters:
         fig = px.scatter_mapbox(df, 
                                 lat="latitude", 
@@ -267,7 +268,7 @@ def plot_map(df, clusters= False,specific_clusters=None):
                                 lat="latitude", 
                                 lon="longitude", 
                                 hover_name="index", 
-                                hover_data=["index", "cluster_count","time", "mag", "ill_frac_interpolated", "depth"],
+                                hover_data=["index","cluster_count","time", "mag", "ill_frac_interpolated", "depth"],
                                 color="cluster_label",
                                 zoom=0.5, 
                                 height=800,
