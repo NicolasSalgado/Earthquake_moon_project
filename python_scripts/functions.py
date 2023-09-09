@@ -217,6 +217,7 @@ def plot_map_animation(df, specific_clusters=None, animation_frame="year"):
 
     Returns: None
     """
+    df = df.reset_index()
     if specific_clusters != None:
         df_filt = df[df.cluster_label.isin(specific_clusters)]
     else:
@@ -724,7 +725,7 @@ def count_number_days(var="r/km", range_var=[]):
     df_moon = read_data(file="moon")
     if len(range_var)>0:
         cant_filt = len(df_moon[(df_moon[var]<range_var[1])&(df_moon[var]>range_var[0])])
-        cant_total = len(df_moon)
+        cant_total = df_moon[var].notnull().count()
         print(f"Cantidad de días con {var} entre {range_var[0]} - {range_var[1]} es {cant_filt}")
         print(f"Porcentaje del total {round(100*cant_filt/cant_total,2)}%")
 
