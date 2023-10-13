@@ -1,4 +1,4 @@
-#1.0 Earthquake_moon project
+# 1.0 Earthquake_moon project
 
 This project is designed to analyze earthquake, solar and lunar gravitational data with the option of managing different graphs, histnorms, tables, trendlines for analysis. For this we consider in the earthquake data latitude and longitude, magnitude, depth, time, periods of the year, groupings by magnitude, groupings of earthquake clusters . On the side of the moon data we take into consideration the data coming from ... and we use the fraction of illumination, declination, and distance (r/km).
 
