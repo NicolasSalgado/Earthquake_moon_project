@@ -5,6 +5,7 @@ This project is designed to analyze earthquake, solar and lunar gravitational da
 We have 60 clusters, for each of them the functions described below work and allow analysis flexibility.
 ![Alt text](./df/input/img/cluster_image.jpeg)
 
+
 Robert Bostrom in Tectonic Consequences of the Earth’s Rotation notes that: 
 > “ Von Helmholtz identified the species of motion (vortical) with respect to which there is no velocity potential in 1857. …, his insight has been disregarded by those of us struck by a tidal energy flux, astronomically well measured, that has seemed to “disappear” within the Earth. For scale, this is at least as great as that released in global seismicity. It may be desirable to examine the effects of actual external gravity, rather than those of a geocentric field that might well be attributed to Ptolemy. “
 
@@ -33,6 +34,22 @@ For Lunar data we employ the spreadsheet created by Jurgen Giesen, GeoAstro.de/m
 
 
 For earthquake data we use the United States Geological Survey (USGS) database of all earthquakes on the globe Earth greater than 4,5 magnitude. To date there have been more than 264.000 earthquakes 4,5 mag and greater since the first of January 1973. This provides for a very thorough snapshot of the current state of lithosphere movement of the Earth.
+## 3.0 Basic Geophysics for Beginners: how the moon and sun relate to Earthquakes
+#### Peter Haney, principal investigator.
+#### Nicolas Salgado, computer programmer , Biwiser Analytica, Santiago, Chile.
+
+By looking at all the earthquakes, all the time, over the entire Earth; it was felt that it might be possible to show a relationship between the moon and sun’s gravitational effects and seismicity on Earth.  https://github.com/NicolasSalgado/Earthquake_moon_project
+By juxtaposing the two data sets of global seismicity and lunar-solar data; the study permitted the data to speak for itself and the following relationship was evident:
+![Alt text](./df/input/img/earthquake.png)
+
+Thus the data illustrates that the mean synodic month, from new moon to full moon and back and forth from full moon and new moon, has a strong relationship to seismicity across the entire Earth.  From 50 years of USGS data for magnitude 5 and greater earthquakes you see the above graph:  0% illumination is a new moon and 100% illumination being the full moon.
+
+“Some scientists have also suggested that plate tectonics may be triggered by the effect of tidal variations across many hundreds of millions of years (influence of the Moon and Sun’s gravity) (Riguzzi et al., 2010; Eppelbaum and Isakov, 2015). However, there is currently no theoretical or practical methodology for testing this hypothesis.
+”Pilchin, Arkady. Eppelbaum, Lev V.    https://www.researchgate.net/publication/344075980_Plate_Tectonics_and_Earth_Evolution_A_Conceptual_Review, 2020 November.
+
+
+The hope is that this program can begin to provide a theoretical and practical method for testing the hypothesis of whether the sun, moon and earth are interconnected sufficiently to affect seismicity. 
+
 
 ## 4.0 Directory Project
 
