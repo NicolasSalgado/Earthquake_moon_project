@@ -752,5 +752,5 @@ def filter_by_date(df, date_filt="2020-05-03", nweeks=4):
     return df_filt
 
 def px_histogram(df, x="MAG_SEG", color='DEPTH_SEG', barmode='group', height=400):
-    fig = px.histogram(df.sort_values(by=color), x=x, color=color, barmode=barmode, height=height)
+    fig = px.histogram(df.sort_values(by=[x,color]), x=x, color=color, barmode=barmode, height=height)
     fig.show()
