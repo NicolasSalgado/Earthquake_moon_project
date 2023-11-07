@@ -157,7 +157,7 @@ def histogram_monthly(df, date_off_set=False, bool_mag_seg=True):
             fig = px.histogram(df.sort_values(by="month"), x="MAG_SEG", color='month', barmode='group', height=400)
         else:
             fig = px.histogram(df.sort_values(by="month"), x="month", color='month', barmode='group', height=400)
-
+    fig.update_xaxes(categoryorder="category ascending")
 
     fig.show()
 
@@ -175,6 +175,7 @@ def histogram_countries(df, countries):
     fig = px.histogram(df_, x="Pais",
                 color='PERIOD', barmode='group',
                 height=400)
+    fig.update_xaxes(categoryorder="category ascending")
     fig.show()
 def histogram_cluster(df, clusters):
     """
@@ -191,6 +192,7 @@ def histogram_cluster(df, clusters):
     fig = px.histogram(df_, x="cluster_label",
                 color='PERIOD', barmode='group',
                 height=400)
+    fig.update_xaxes(categoryorder="category ascending")
     fig.show()
 def countries_value_counts(df):
     """
@@ -670,6 +672,7 @@ def histogram_overtime(df,var,specific_cluster=None, animation_frame="year"):
         fig = px.histogram(df,[var],histnorm="probability density", barmode="overlay",
                        cumulative=False, animation_frame=animation_frame, title=title_l, marginal="box")
     #'group', 'overlay' or 'relative'
+    fig.update_xaxes(categoryorder="category ascending")
     fig.show()
     
 def histogram_animation(df, var="ill_frac_interpolated", nbins=None , histnorm="percent",animation_frame="year", range_x=None, range_y=None):
@@ -692,8 +695,10 @@ def histogram_animation(df, var="ill_frac_interpolated", nbins=None , histnorm="
         df = df.sort_values(by="mag_round")
     elif "mag" in animation_frame:
         df = df.sort_values(by="mag")
+    else:
+        df = df.sort_values(by=animation_frame)
  
-    fig = px.histogram(df,var,histnorm=histnorm,nbins=nbins ,cumulative=False, animation_frame=animation_frame, range_x=range_x, range_y=range_y)
+    fig = px.histogram(df,var,histnorm=histnorm,nbins=nbins ,cumulative=False, animation_frame=animation_frame, range_x=range_x, range_y=range_y).update_xaxes(categoryorder="category ascending")
     fig.show()
 def filter_dataframe(df,var = "ill_frac_interpolated" ,var_range = (0,100), mag_range=(3,10)):
     """
@@ -751,6 +756,7 @@ def filter_by_date(df, date_filt="2020-05-03", nweeks=4):
     df_filt['week'] = df_filt['time'].apply(calcular_semana)
     return df_filt
 
+
 def px_histogram(df, x="MAG_SEG", color='DEPTH_SEG', barmode='group', height=400):
-    fig = px.histogram(df.sort_values(by=[x,color]), x=x, color=color, barmode=barmode, height=height)
+    fig = px.histogram(df.sort_values(by=color), x=x, color=color, barmode=barmode, height=height).update_xaxes(categoryorder ="category ascending")
     fig.show()
