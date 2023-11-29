@@ -572,15 +572,14 @@ def plot_calculo_distribution(df, var="ill_frac_interpolated", histnorm="percent
     if specific_cluster != None:
         df = df[df.cluster_label == specific_cluster]
     fig = px.histogram(df,var,histnorm= histnorm, cumulative=False)
-
-    max_ = df[var].max()
-    min_ = df[var].min()
-    bin_width = (max_ - min_) / num_bins
-    fig.update_traces(xbins=dict( # bins used for histogram
-            start=min_,
-            end=max_,
-            size=bin_width
-        )) 
+    if not("SEG" in var):
+        max_ = df[var].max()
+        min_ = df[var].min()
+        bin_width = (max_ - min_) / num_bins
+        fig.update_traces(xbins=dict( # bins used for histogram
+                start=min_,
+                end=max_,
+                size=bin_width))
     fig.show()
 def plot_monthly(df, years=(1990,2010)):
     """
