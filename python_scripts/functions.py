@@ -43,7 +43,7 @@ def read_data(file="minable"):
 
     """
     if file == "minable":
-        minable = pd.read_csv(getPath(FILES.minable), index_col=0)
+        minable = pd.read_csv(getPath(FILES.minable))
         minable['time']= pd.to_datetime(minable['time'])
         return minable
     elif file == "earth":
